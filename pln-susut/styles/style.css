@@ -8,14 +8,29 @@ body {
     height: 400px;
     margin: 20px auto;
     position: relative;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
-.form-container {
-    max-width: 800px;
-    margin: auto;
+.table-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
 }
 
-.highlight-green { background-color: #d4edda; }
-.highlight-yellow { background-color: #fff3cd; }
-.highlight-red { background-color: #f8d7da; }
-.highlight-blue { background-color: #d1ecf1; }
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-dark {
+    background-color: #343a40;
+    color: #ffffff;
+}

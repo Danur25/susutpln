@@ -64,13 +64,13 @@
             <label for="ulpFilter" class="form-label">Pilih ULP/UP:</label>
             <select class="form-select" id="ulpFilter">
                 <option value="all">Semua</option>
-                <option value="ulp1">ULP Lubuk Pakam</option>
-                <option value="ulp2">ULP Tanjung Morawa</option>
-                <option value="ulp3">ULP Perbaungan</option>
-                <option value="ulp4">ULP Sei Rampah</option>
-                <option value="ulp5">ULP Galang</option>
-                <option value="ulp6">ULP Dolok Masihul</option>
-                <option value="up3">UP3 Lubuk Pakam</option>
+                <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
+                <option value="ULP Galang">ULP Galang</option>
+                <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
+                <option value="ULP Pakam Kota">ULP Pakam Kota</option>
+                <option value="ULP Sei Rampah">ULP Sei Rampah</option>
+                <option value="ULP Perbaungan">ULP Perbaungan</option>
+                <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
             </select>
         </div>
 
@@ -82,8 +82,25 @@
 
     <!-- Tabel Data -->
     <div class="container mt-4">
-        <table class="table table-hover table-bordered">
-            <thead>
+        <h2 class="text-center">📋 Tabel Data Susut</h2>
+        
+        <!-- Filter Tabel -->
+        <div class="mb-3">
+            <label for="tableFilter" class="form-label">Pilih ULP/UP:</label>
+            <select class="form-select" id="tableFilter">
+                <option value="all">Semua</option>
+                <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
+                <option value="ULP Galang">ULP Galang</option>
+                <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
+                <option value="ULP Pakam Kota">ULP Pakam Kota</option>
+                <option value="ULP Sei Rampah">ULP Sei Rampah</option>
+                <option value="ULP Perbaungan">ULP Perbaungan</option>
+                <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
+            </select>
+        </div>
+
+        <table class="table table-hover table-bordered table-striped">
+            <thead class="table-dark">
                 <tr>
                     <th>No</th>
                     <th>Unit Layanan Pelanggan</th>
@@ -145,20 +162,33 @@
         });
 
         // Ambil data dari localStorage
-        const susutData = JSON.parse(localStorage.getItem('susutData')) || [];
+        let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
 
         // Tampilkan data di tabel
         const tableBody = document.getElementById('dataTableBody');
-        susutData.forEach((data, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${data.ulp}</td>
-                <td>${data.tanggal}</td>
-                <td>${data.jumlahSusut}</td>
-            `;
-            tableBody.appendChild(row);
+        function renderTable(filter = 'all') {
+            tableBody.innerHTML = ''; // Kosongkan tabel
+            susutData.forEach((data, index) => {
+                if (filter === 'all' || data.ulp === filter) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${data.ulp}</td>
+                        <td>${data.tanggal}</td>
+                        <td>${data.jumlahSusut}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        // Filter tabel
+        document.getElementById('tableFilter').addEventListener('change', function() {
+            renderTable(this.value);
         });
+
+        // Render tabel awal
+        renderTable();
 
         // Data untuk grafik
         const dataForChart = {
@@ -209,6 +239,16 @@
                             text: 'Jumlah Susut (MW)'
                         },
                         beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
                     }
                 }
             }

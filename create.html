@@ -13,7 +13,7 @@
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         if (!isLoggedIn) {
             alert('Anda harus login terlebih dahulu!');
-            window.location.href = 'index.html'; // Redirect ke halaman utama
+            window.location.href = 'index.html'; // Redirect ke halaman grafik
         }
     </script>
 
@@ -22,11 +22,7 @@
             <a class="navbar-brand fw-bold" href="#">PLN</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">GRAFIK & TABEL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="create.html">INPUT</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="logoutButton">LOGOUT</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                 </ul>
             </div>
         </div>
@@ -63,7 +59,7 @@
 
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
-                    <a href="index.html" class="btn btn-secondary">Batal</a>
+                    <a href="grafik-sust.html" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
         </div>
@@ -93,15 +89,15 @@
             susutData.push(data);
             localStorage.setItem('susutData', JSON.stringify(susutData));
 
-            // Redirect ke halaman utama
-            window.location.href = 'index.html';
+            // Redirect ke halaman grafik
+            window.location.href = 'grafik-sust.html';
         });
 
         // Handle logout
         document.getElementById('logoutButton').addEventListener('click', function() {
             localStorage.removeItem('isLoggedIn');
             alert('Anda telah logout.');
-            window.location.href = 'index.html'; // Redirect ke halaman utama
+            window.location.href = 'grafik-sust.html'; // Redirect ke halaman grafik
         });
     </script>
 </body>

@@ -1,270 +1,158 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Susut PLN</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PLN Susut</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .bg-pln { background-color: #007AC2; }
+    .text-pln { color: #FFD700; }
+    .btn-pln { background-color: #FFD700; color: #007AC2; }
+    .btn-pln:hover { background-color: #ffcc00; }
+    .marquee {
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+      position: absolute;
+      top: 20px;
+      animation: marquee 10s linear infinite;
+    }
+    @keyframes marquee {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+    .slideshow-container img {
+      display: none;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: opacity 1s ease-in-out;
+    }
+    .slideshow-container img.active {
+      display: block;
+      opacity: 1;
+    }
+    .text-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9));
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      max-width: 800px;
+      text-align: center;
+      font-size: 1.2em;
+      color: #333;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .animate-pop-in {
+      animation: popIn 0.8s ease-out forwards;
+    }
+    .delay-1 { animation-delay: 0.3s; }
+    .delay-2 { animation-delay: 0.6s; }
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .text-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #007AC2, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+    }
+    .shadow-text {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    .modal.active, .modal-overlay.active {
+      display: block;
+    }
+  </style>
 </head>
-<body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">PLN</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">GRAFIK & TABEL</a></li>
-                    <li class="nav-item" id="inputNavItem" style="display: none;">
-                        <a class="nav-link" href="create.html">INPUT</a>
-                    </li>
-                    <li class="nav-item" id="loginNavItem">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">LOGIN</a>
-                    </li>
-                    <li class="nav-item" id="logoutNavItem" style="display: none;">
-                        <a class="nav-link" href="#" id="logoutButton">LOGOUT</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body class="text-gray-900">
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('pln-susut/styles/scripts/assets/latarpln.png'); background-size: cover; background-position: center; filter: blur(5px); z-index: -1;"></div>
+  
+  <!-- Modal Selamat Datang Admin -->
+  <div id="welcome-modal" class="modal">
+    <div class="text-center">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Selamat Datang, Admin!</h2>
+      <p class="text-gray-700">Anda telah login sebagai admin. Selamat bekerja!</p>
+      <button id="close-modal-btn" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors mt-4">Tutup</button>
+    </div>
+  </div>
+  <div id="modal-overlay" class="modal-overlay"></div>
 
-    <!-- Modal Login -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login Admin</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+  <header class="bg-pln text-white p-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center space-x-4">
+      <img src="pln-susut/styles/scripts/assets/logo_pln.png" alt="PLN Logo" class="w-12 h-12"/>
+      <nav class="hidden md:flex space-x-6">
+        <a href="index.html" class="hover:underline">Home</a>
+        <a href="susut.html" class="hover:underline">Susut</a>
+      </nav>
+    </div>
+    <div class="flex items-center space-x-4">
+      <!-- Tombol Login/Logout -->
+      <a id="login-logout-btn" href="login.html" class="btn-pln px-4 py-2 rounded-md font-bold shadow-md hover:bg-yellow-500 transition-colors">Login</a>
+    </div>
+  </header>
+
+  <main class="relative w-full h-screen flex flex-col items-center justify-center">
+ 
+    <div class="text-box animate-pop-in">
+      <h1 class="gradient-text shadow-text text-4xl mb-4">Selamat Datang di Sistem Susut PLN!</h1>
+      <p class="text-gray-700">Sistem ini dirancang untuk memantau dan menganalisis data susut energi listrik secara real-time.</p>
+    </div>
+    <div class="text-box animate-pop-in delay-1">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Transparan dan Akurat</h2>
+      <p class="text-gray-700">Dikelola langsung oleh PT. PLN UP3 Lubuk Pakam, Divisi Transaksi Energi Listrik.</p>
+    </div>
+    <div class="text-box animate-pop-in delay-2">
+      <h2 class="gradient-text shadow-text text-3xl mb-4">Monitoring & Analisis</h2>
+      <p class="text-gray-700">Sebagai media untuk monitoring dan analisis data susut kelistrikan.</p>
     </div>
 
-    <!-- Konten Utama -->
-    <div class="container mt-4">
-        <h2 class="text-center">📊 Grafik Susut UP3 Lubuk Pakam</h2>
-        
-        <!-- Filter ULP/UP -->
-        <div class="mb-3">
-            <label for="ulpFilter" class="form-label">Pilih ULP/UP:</label>
-            <select class="form-select" id="ulpFilter">
-                <option value="all">Semua</option>
-                <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
-                <option value="ULP Galang">ULP Galang</option>
-                <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
-                <option value="ULP Pakam Kota">ULP Pakam Kota</option>
-                <option value="ULP Sei Rampah">ULP Sei Rampah</option>
-                <option value="ULP Perbaungan">ULP Perbaungan</option>
-                <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
-            </select>
-        </div>
+  </main>
 
-        <!-- Grafik -->
-        <div class="chart-container">
-            <canvas id="susutChart"></canvas>
-        </div>
+  <footer class="bg-pln text-white text-center py-6 mt-10">
+    <div class="container mx-auto">
+      <p class="text-sm mb-4">&copy; 2025 PROJECT MAGANG UINSU - PLN UP3 LUBUK PAKAM.</p>
+      <ul class="flex justify-center space-x-6 mb-4">
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-instagram"></i></a></li>
+        <li><a href="#" class="hover:text-yellow-400 transition-colors"><i class="fab fa-linkedin-in"></i></a></li>
+      </ul>
     </div>
-
-    <!-- Tabel Data -->
-    <div class="container mt-4">
-        <h2 class="text-center">📋 Tabel Data Susut</h2>
-        
-        <!-- Filter Tabel -->
-        <div class="mb-3">
-            <label for="tableFilter" class="form-label">Pilih ULP/UP:</label>
-            <select class="form-select" id="tableFilter">
-                <option value="all">Semua</option>
-                <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
-                <option value="ULP Galang">ULP Galang</option>
-                <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
-                <option value="ULP Pakam Kota">ULP Pakam Kota</option>
-                <option value="ULP Sei Rampah">ULP Sei Rampah</option>
-                <option value="ULP Perbaungan">ULP Perbaungan</option>
-                <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
-            </select>
-        </div>
-
-        <table class="table table-hover table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>Unit Layanan Pelanggan</th>
-                    <th>Tanggal</th>
-                    <th>Jumlah Susut (MW)</th>
-                </tr>
-            </thead>
-            <tbody id="dataTableBody">
-                <!-- Data tabel akan diisi oleh JavaScript -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Cek status login
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-        // Tampilkan/sembunyikan tombol INPUT dan LOGOUT berdasarkan status login
-        const inputNavItem = document.getElementById('inputNavItem');
-        const loginNavItem = document.getElementById('loginNavItem');
-        const logoutNavItem = document.getElementById('logoutNavItem');
-
-        if (isLoggedIn) {
-            inputNavItem.style.display = 'block';
-            loginNavItem.style.display = 'none';
-            logoutNavItem.style.display = 'block';
-        }
-
-        // Handle login form
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Cek kredensial
-            if (email === 'pln@example.com' && password === 'anakmagang') {
-                localStorage.setItem('isLoggedIn', 'true');
-                inputNavItem.style.display = 'block';
-                loginNavItem.style.display = 'none';
-                logoutNavItem.style.display = 'block';
-                alert('Login berhasil!');
-                window.location.href = 'create.html'; // Redirect ke halaman input
-            } else {
-                alert('Email atau password salah!');
-            }
-        });
-
-        // Handle logout
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            localStorage.removeItem('isLoggedIn');
-            inputNavItem.style.display = 'none';
-            loginNavItem.style.display = 'block';
-            logoutNavItem.style.display = 'none';
-            alert('Anda telah logout.');
-            window.location.href = 'index.html'; // Redirect ke halaman utama
-        });
-
-        // Ambil data dari localStorage
-        let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
-
-        // Tampilkan data di tabel
-        const tableBody = document.getElementById('dataTableBody');
-        function renderTable(filter = 'all') {
-            tableBody.innerHTML = ''; // Kosongkan tabel
-            susutData.forEach((data, index) => {
-                if (filter === 'all' || data.ulp === filter) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${data.ulp}</td>
-                        <td>${data.tanggal}</td>
-                        <td>${data.jumlahSusut}</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
-            });
-        }
-
-        // Filter tabel
-        document.getElementById('tableFilter').addEventListener('change', function() {
-            renderTable(this.value);
-        });
-
-        // Render tabel awal
-        renderTable();
-
-        // Data untuk grafik
-        const dataForChart = {
-            labels: [], // Tanggal
-            datasets: [] // Data per ULP
-        };
-
-        // Kelompokkan data berdasarkan ULP
-        const ulpData = {};
-        susutData.forEach(data => {
-            if (!ulpData[data.ulp]) {
-                ulpData[data.ulp] = {
-                    label: data.ulp,
-                    data: [],
-                    borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
-                    fill: false
-                };
-            }
-            ulpData[data.ulp].data.push(data.jumlahSusut);
-            if (!dataForChart.labels.includes(data.tanggal)) {
-                dataForChart.labels.push(data.tanggal);
-            }
-        });
-
-        // Masukkan data ke dataset grafik
-        for (const key in ulpData) {
-            dataForChart.datasets.push(ulpData[key]);
-        }
-
-        // Buat grafik
-        const ctx = document.getElementById('susutChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: dataForChart,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Tanggal'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Jumlah Susut (MW)'
-                        },
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                    }
-                }
-            }
-        });
-
-        // Fungsi untuk memperbarui grafik berdasarkan filter
-        document.getElementById('ulpFilter').addEventListener('change', function() {
-            const selectedValue = this.value;
-            if (selectedValue === 'all') {
-                chart.data.datasets = dataForChart.datasets;
-            } else {
-                const filteredData = dataForChart.datasets.filter(dataset => dataset.label === selectedValue);
-                chart.data.datasets = filteredData;
-            }
-            chart.update();
-        });
-    </script>
+  </footer>
 </body>
 </html>

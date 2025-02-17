@@ -154,5 +154,34 @@
       </ul>
     </div>
   </footer>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const loginLogoutBtn = document.getElementById('login-logout-btn');
+        const welcomeModal = document.getElementById('welcome-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+
+        if (isLoggedIn) {
+            loginLogoutBtn.textContent = 'Logout';
+            loginLogoutBtn.href = '#';
+            loginLogoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('isLoggedIn');
+                alert('Anda telah logout.');
+                window.location.href = 'index.html';
+            });
+
+            welcomeModal.classList.add('active');
+            modalOverlay.classList.add('active');
+        } else {
+            loginLogoutBtn.textContent = 'Login';
+            loginLogoutBtn.href = 'login.html';
+        }
+
+        document.getElementById('close-modal-btn').addEventListener('click', function() {
+            welcomeModal.classList.remove('active');
+            modalOverlay.classList.remove('active');
+        });
+    });
+  </script>
 </body>
 </html>

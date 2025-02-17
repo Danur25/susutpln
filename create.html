@@ -89,6 +89,10 @@
             susutData.push(data);
             localStorage.setItem('susutData', JSON.stringify(susutData));
 
+            // Update table and chart
+            updateTable(data);
+            updateChart();
+
             // Redirect ke halaman grafik
             window.location.href = 'grafik-sust.html';
         });

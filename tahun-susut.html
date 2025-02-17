@@ -10,6 +10,7 @@
         body {
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             padding: 20px;
+            font-family: 'Roboto', sans-serif;
         }
         .card {
             background: rgba(255, 255, 255, 0.9);
@@ -17,11 +18,17 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             padding: 2rem;
             margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
         h1 {
             color: #2575fc;
             text-align: center;
             margin-bottom: 2rem;
+            font-weight: bold;
         }
         canvas {
             max-height: 500px;
@@ -45,9 +52,31 @@
             border-radius: 25px;
             color: white;
             margin-bottom: 2rem;
+            transition: background 0.3s ease;
         }
         .btn-back:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+        .btn-delete {
+            background: #ff4d4d;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            color: white;
+            transition: background 0.3s ease;
+        }
+        .btn-delete:hover {
+            background: #ff1a1a;
+        }
+        .form-select, .form-control {
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .form-select:focus, .form-control:focus {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -94,6 +123,19 @@
             <div class="chart-container">
                 <canvas id="susutChart"></canvas>
             </div>
+            <div class="mb-3">
+                <label for="ulpFilter" class="form-label">Pilih ULP:</label>
+                <select id="ulpFilter" class="form-select">
+                    <option value="all">Semua</option>
+                    <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
+                    <option value="ULP Galang">ULP Galang</option>
+                    <option value="ULP Dolok Masihul">ULP Dolok Masihul</option>
+                    <option value="ULP Pakam Kota">ULP Pakam Kota</option>
+                    <option value="ULP Sei Rampah">ULP Sei Rampah</option>
+                    <option value="ULP Perbaungan">ULP Perbaungan</option>
+                    <option value="UP3 Lubuk Pakam">UP3 Lubuk Pakam</option>
+                </select>
+            </div>
         </div>
 
         <!-- Form Input Data Susut -->
@@ -133,7 +175,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="jumlahSusut" class="form-label">Jumlah Susut (MW)</label>
-                    <input type="number" class="form-control" id="jumlahSusut" required>
+                    <input type="number" step="0.01" class="form-control" id="jumlahSusut" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan Data</button>
             </form>
@@ -147,22 +189,73 @@
         document.getElementById('tahun').textContent = tahun;
 
         // Data dummy untuk contoh
-        let dataSusut = JSON.parse(localStorage.getItem('dataSusut')) || {
-            "2024": [],
-            "2023": [],
-            // Tambahkan data untuk tahun lainnya
-        };
+        let dataSusut = JSON.parse(localStorage.getItem('dataSusut')) || {};
+
+        // Daftar unit layanan pelanggan
+        const unitLayanan = [
+            "ULP Tanjung Morawa",
+            "ULP Galang",
+            "ULP Dolok Masihul",
+            "ULP Pakam Kota",
+            "ULP Sei Rampah",
+            "ULP Perbaungan",
+            "UP3 Lubuk Pakam"
+        ];
 
         // Tampilkan data di tabel
         const tableBody = document.getElementById('dataTableBody');
         const dataTahun = dataSusut[tahun] || [];
-        dataTahun.forEach((data, index) => {
+        unitLayanan.forEach((ulp, index) => {
+            const data = dataTahun.find(d => d.ulp === ulp) || {};
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${index + 1}</td>
-                <td>${data.ulp}</td>
-                <td>${data.bulan}</td>
-                <td>${data.jumlahSusut}</td>
+                <td>${ulp}</td>
+                <td>${data.jan || ''}</td>
+                <td>${data.feb || ''}</td>
+                <td>${data.mar || ''}</td>
+                <td>${data.apr || ''}</td>
+                <td>${data.mei || ''}</td>
+                <td>${data.jun || ''}</td>
+                <td>${data.jul || ''}</td>
+                <td>${data.agt || ''}</td>
+                <td>${data.sep || ''}</td>
+                <td>${data.okt || ''}</td>
+                <td>${data.nov || ''}</td>
+                <td>${data.des || ''}</td>
+                <td>${data.kumJan || ''}</td>
+                <td>${data.kumFeb || ''}</td>
+                <td>${data.kumMar || ''}</td>
+                <td>${data.kumApr || ''}</td>
+                <td>${data.kumMei || ''}</td>
+                <td>${data.kumJun || ''}</td>
+                <td>${data.kumJul || ''}</td>
+                <td>${data.kumAgt || ''}</td>
+                <td>${data.kumSep || ''}</td>
+                <td>${data.kumOkt || ''}</td>
+                <td>${data.kumNov || ''}</td>
+                <td>${data.kumDes || ''}</td>
+                <td>${data.targetDes || ''}</td>
+                <td>${data.targetKumDes || ''}</td>
+                <td>${data.targetSem1 || ''}</td>
+                <td>${data.targetSem2 || ''}</td>
+                <td>
+                    <select onchange="deleteData('${ulp}', this.value)">
+                        <option value="" disabled selected>Pilih Bulan</option>
+                        <option value="jan">JAN</option>
+                        <option value="feb">FEB</option>
+                        <option value="mar">MAR</option>
+                        <option value="apr">APR</option>
+                        <option value="mei">MEI</option>
+                        <option value="jun">JUN</option>
+                        <option value="jul">JUL</option>
+                        <option value="agt">AGT</option>
+                        <option value="sep">SEP</option>
+                        <option value="okt">OKT</option>
+                        <option value="nov">NOV</option>
+                        <option value="des">DES</option>
+                    </select>
+                </td>
             `;
             tableBody.appendChild(row);
         });
@@ -172,15 +265,8 @@
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: dataTahun.map(d => d.bulan),
-                datasets: [{
-                    label: 'Jumlah Susut (MW)',
-                    data: dataTahun.map(d => d.jumlahSusut),
-                    borderColor: '#6a11cb',
-                    backgroundColor: 'rgba(106, 17, 203, 0.2)',
-                    fill: true,
-                    tension: 0.4,
-                }]
+                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+                datasets: []
             },
             options: {
                 responsive: true,
@@ -222,29 +308,84 @@
             const jumlahSusut = parseFloat(document.getElementById('jumlahSusut').value);
 
             // Tambahkan data baru
-            const newData = { ulp, bulan, jumlahSusut };
-            dataTahun.push(newData);
+            let data = dataTahun.find(d => d.ulp === ulp);
+            if (!data) {
+                data = { ulp };
+                dataTahun.push(data);
+            }
+            data[bulan.toLowerCase()] = jumlahSusut;
             dataSusut[tahun] = dataTahun;
             localStorage.setItem('dataSusut', JSON.stringify(dataSusut));
 
             // Update tabel
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${dataTahun.length}</td>
-                <td>${ulp}</td>
-                <td>${bulan}</td>
-                <td>${jumlahSusut}</td>
-            `;
-            tableBody.appendChild(row);
+            const row = tableBody.querySelector(`tr:nth-child(${unitLayanan.indexOf(ulp) + 1})`);
+            row.querySelector(`td:nth-child(${new Date(bulan + ' 1, 2022').getMonth() + 3})`).textContent = jumlahSusut;
 
             // Update grafik
-            chart.data.labels.push(bulan);
-            chart.data.datasets[0].data.push(jumlahSusut);
-            chart.update();
+            updateChart();
+
+            // Update tabel di halaman lain
+            updateOtherTables(data);
 
             // Reset form
             document.getElementById('susutForm').reset();
         });
+
+        // Fungsi untuk menghapus data per bulan
+        function deleteData(ulp, bulan) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                let data = dataTahun.find(d => d.ulp === ulp);
+                if (data) {
+                    delete data[bulan.toLowerCase()];
+                    dataSusut[tahun] = dataTahun;
+                    localStorage.setItem('dataSusut', JSON.stringify(dataSusut));
+                    location.reload();
+                }
+            }
+        }
+
+        // Fungsi untuk memperbarui tabel di halaman lain
+        function updateOtherTables(newData) {
+            let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
+            susutData.push(newData);
+            localStorage.setItem('susutData', JSON.stringify(susutData));
+        }
+
+        // Fungsi untuk memperbarui grafik berdasarkan filter
+        document.getElementById('ulpFilter').addEventListener('change', function() {
+            updateChart(this.value);
+        });
+
+        // Update chart function
+        function updateChart(selectedULP = 'all') {
+            const filteredData = selectedULP === 'all' ? dataTahun : dataTahun.filter(d => d.ulp === selectedULP);
+            const datasets = filteredData.map(data => ({
+                label: data.ulp,
+                data: [
+                    data.jan || 0,
+                    data.feb || 0,
+                    data.mar || 0,
+                    data.apr || 0,
+                    data.mei || 0,
+                    data.jun || 0,
+                    data.jul || 0,
+                    data.agt || 0,
+                    data.sep || 0,
+                    data.okt || 0,
+                    data.nov || 0,
+                    data.des || 0
+                ],
+                borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                fill: false,
+                tension: 0.4
+            }));
+            chart.data.datasets = datasets;
+            chart.update();
+        }
+
+        // Inisialisasi grafik dengan semua data
+        updateChart();
     </script>
 </body>
 </html>

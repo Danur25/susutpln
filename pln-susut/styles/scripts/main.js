@@ -61,10 +61,7 @@ document.getElementById('susutForm').addEventListener('submit', function(event) 
     window.location.href = 'index.html';
 });
 document.addEventListener("DOMContentLoaded", function() {
-    const dataSusut = {
-        "2024": [],
-        "2023": [],
-    };
+    const dataSusut = JSON.parse(localStorage.getItem('dataSusut')) || {};
 
     const tableBody = document.getElementById('dataTableBody');
     const ctx = document.getElementById('susutChart').getContext('2d');
@@ -110,6 +107,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Update grafik
         updateChart(dataSusut[tahun]);
+
+        localStorage.setItem('dataSusut', JSON.stringify(dataSusut));
 
         alert('Data berhasil disimpan!');
         this.reset(); // Reset form

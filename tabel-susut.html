@@ -6,6 +6,19 @@
     <title>Tabel Susut PLN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        .btn-delete {
+            background: #ff4d4d;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #ff1a1a;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <!-- Navbar -->
@@ -49,6 +62,7 @@
                     <th>Unit Layanan Pelanggan</th>
                     <th>Tanggal</th>
                     <th>Jumlah Susut (MW)</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="dataTableBody">
@@ -75,6 +89,7 @@
                         <td>${data.ulp}</td>
                         <td>${data.tanggal}</td>
                         <td>${data.jumlahSusut}</td>
+                        <td><button class="btn-delete" onclick="deleteData(${index})">Hapus</button></td>
                     `;
                     tableBody.appendChild(row);
                 }
@@ -88,6 +103,22 @@
 
         // Render tabel awal
         renderTable();
+
+        // Fungsi untuk menghapus data
+        function deleteData(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                susutData.splice(index, 1);
+                localStorage.setItem('susutData', JSON.stringify(susutData));
+                renderTable(document.getElementById('tableFilter').value);
+            }
+        }
+
+        // Fungsi untuk memperbarui tabel setelah input data baru
+        function updateTable(newData) {
+            susutData.push(newData);
+            localStorage.setItem('susutData', JSON.stringify(susutData));
+            renderTable(document.getElementById('tableFilter').value);
+        }
     </script>
 </body>
 </html>

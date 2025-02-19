@@ -169,3 +169,17 @@
   </script>
 </body>
 </html>
+
+
+// Fungsi untuk menghapus data per bulan
+        function deleteData(ulp, bulan) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                let data = dataTahun.find(d => d.ulp === ulp);
+                if (data) {
+                    delete data[bulan.toLowerCase()];
+                    dataSusut[tahun] = dataTahun;
+                    localStorage.setItem('dataSusut', JSON.stringify(dataSusut));
+                    location.reload();
+                }
+            }
+        }

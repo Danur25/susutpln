@@ -5,37 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Data Susut PLN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/styles.css">
-</head>
-<body class="bg-light">
-    <script>
-        // Cek status login
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (!isLoggedIn) {
-            alert('Anda harus login terlebih dahulu!');
-            window.location.href = 'index.html'; // Redirect ke halaman grafik
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
         }
-    </script>
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: #2575fc;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            color: white;
+            transition: background 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+        .locked-form {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">PLN</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <h1 class="text-center text-primary">Tambah Data Susut PLN</h1>
-
-        <div class="form-container bg-white p-4 rounded shadow-sm">
+<body>
+    <div class="container">
+        <h1>Tambah Data Susut PLN</h1>
+        <div class="form-container" id="formContainer">
             <form id="susutForm">
+                <!-- Pilih ULP -->
                 <div class="mb-3">
                     <label for="ulp" class="form-label">Pilih Unit Layanan (ULP)</label>
-                    <select name="ulp" id="ulp" class="form-select" required>
+                    <select name="ulp" id="ulp" class="form-select" required disabled>
                         <option value="" selected disabled>-- Pilih ULP --</option>
                         <option value="ULP Tanjung Morawa">ULP Tanjung Morawa</option>
                         <option value="ULP Galang">ULP Galang</option>
@@ -43,65 +59,169 @@
                         <option value="ULP Pakam Kota">ULP Pakam Kota</option>
                         <option value="ULP Sei Rampah">ULP Sei Rampah</option>
                         <option value="ULP Perbaungan">ULP Perbaungan</option>
-                        <option value="UP3 Pakam">UP3 Lubuk Pakam</option>
+                        <option value="UP3 Lubuk Pakam">UP3 Lubuk Pakam</option>
                     </select>
                 </div>
 
+                <!-- Pilih Tahun -->
                 <div class="mb-3">
-                    <label for="tanggal" class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal" id="tanggal" class="form-control" required>
+                    <label for="tahun" class="form-label">Tahun</label>
+                    <input type="number" name="tahun" id="tahun" class="form-control" required disabled>
                 </div>
 
+                <!-- Input Data Bulanan -->
                 <div class="mb-3">
-                    <label for="jumlah_susut" class="form-label">Jumlah Susut (MW)</label>
-                    <input type="number" step="0.01" name="jumlah_susut" id="jumlah_susut" class="form-control" required>
+                    <label class="form-label">Data Bulanan</label>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="jan" class="form-control" placeholder="Jan" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="feb" class="form-control" placeholder="Feb" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="mar" class="form-control" placeholder="Mar" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="apr" class="form-control" placeholder="Apr" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="mei" class="form-control" placeholder="Mei" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="jun" class="form-control" placeholder="Jun" disabled>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="jul" class="form-control" placeholder="Jul" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="agt" class="form-control" placeholder="Agt" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="sep" class="form-control" placeholder="Sep" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="okt" class="form-control" placeholder="Okt" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="nov" class="form-control" placeholder="Nov" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="des" class="form-control" placeholder="Des" disabled>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Input Data Kumulatif -->
+                <div class="mb-3">
+                    <label class="form-label">Data Kumulatif</label>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumJan" class="form-control" placeholder="Kum Jan" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumFeb" class="form-control" placeholder="Kum Feb" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumMar" class="form-control" placeholder="Kum Mar" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumApr" class="form-control" placeholder="Kum Apr" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumMei" class="form-control" placeholder="Kum Mei" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumJun" class="form-control" placeholder="Kum Jun" disabled>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumJul" class="form-control" placeholder="Kum Jul" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumAgt" class="form-control" placeholder="Kum Agt" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumSep" class="form-control" placeholder="Kum Sep" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumOkt" class="form-control" placeholder="Kum Okt" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumNov" class="form-control" placeholder="Kum Nov" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" name="kumDes" class="form-control" placeholder="Kum Des" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Data Target -->
+                <div class="mb-3">
+                    <label class="form-label">Data Target</label>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="number" step="0.01" name="targetDes" class="form-control" placeholder="Target Des" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" step="0.01" name="targetKumDes" class="form-control" placeholder="Target Kum Des" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" step="0.01" name="targetSem1" class="form-control" placeholder="Target Sem 1" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" step="0.01" name="targetSem2" class="form-control" placeholder="Target Sem 2" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Simpan dan Batal -->
                 <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Simpan Data</button>
-                    <a href="grafik-sust.html" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary" disabled>Simpan Data</button>
+                    <a href="tahun-susut.html" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Cek status login
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const formContainer = document.getElementById('formContainer');
+        const formElements = document.querySelectorAll('#susutForm input, #susutForm select, #susutForm button');
+
+        if (isLoggedIn) {
+            // Jika sudah login, buka gembok
+            formContainer.classList.remove('locked-form');
+            formElements.forEach(element => element.disabled = false);
+        } else {
+            // Jika belum login, tampilkan pesan dan redirect ke halaman login
+            alert('Anda harus login terlebih dahulu!');
+            window.location.href = 'login.html'; // Ganti dengan halaman login Anda
+        }
+
         // Handle form submission
         document.getElementById('susutForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
             // Ambil data dari form
-            const ulp = document.getElementById('ulp').value;
-            const tanggal = document.getElementById('tanggal').value;
-            const jumlahSusut = parseFloat(document.getElementById('jumlah_susut').value);
-
-            // Buat objek data
-            const data = {
-                ulp,
-                tanggal,
-                jumlahSusut
-            };
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
 
             // Simpan data ke localStorage
-            let susutData = JSON.parse(localStorage.getItem('susutData')) || [];
-            susutData.push(data);
+            let susutData = JSON.parse(localStorage.getItem('susutData')) || {};
+            const tahun = data.tahun;
+            if (!susutData[tahun]) {
+                susutData[tahun] = [];
+            }
+            susutData[tahun].push(data);
             localStorage.setItem('susutData', JSON.stringify(susutData));
 
-            // Update table and chart
-            updateTable(data);
-            updateChart();
-
-            // Redirect ke halaman grafik
-            window.location.href = 'grafik-sust.html';
-        });
-
-        // Handle logout
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            localStorage.removeItem('isLoggedIn');
-            alert('Anda telah logout.');
-            window.location.href = 'grafik-sust.html'; // Redirect ke halaman grafik
+            // Redirect ke halaman tahun-susut.html dengan parameter tahun
+            window.location.href = `tahun-susut.html?tahun=${tahun}`;
         });
     </script>
 </body>
